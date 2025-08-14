@@ -4,8 +4,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import morgan from 'morgan';
 import chalk from 'chalk';
 import fs from 'fs';
-import { Command } from 'commander';
-import { Route, GatewayConfig } from './config';
+import { Route } from './config';
 
 export function startServer(routes: Route[], logFile?: string): void {
   const app = express();
@@ -37,20 +36,4 @@ export function startServer(routes: Route[], logFile?: string): void {
   app.listen(port, () => {
     console.log(`Gateway listening at http://localhost:${port}`);
   });
-}
-
-function runFromCli(): void {
-  const program = new Command();
-  program
-    .requiredOption('--config <path>', 'config file')
-    .option('--log <path>', 'log file')
-    .action(opts => {
-      const config: GatewayConfig = JSON.parse(fs.readFileSync(opts.config, 'utf8'));
-      startServer(config.routes, opts.log);
-    });
-  program.parse(process.argv);
-}
-
-if (require.main === module) {
-  runFromCli();
 }
